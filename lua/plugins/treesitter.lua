@@ -3,7 +3,7 @@ return {
   lazy = false,
   build = ":TSUpdate",
   opts = {
-    ensure_installed = { "lua", "javascript" },
+    ensure_installed = { "lua", "javascript", "typescript", "gdscript", "godot_resource", "gdshader" },
     highlight = { enable = true },
     indent = { enable = true },
   },
