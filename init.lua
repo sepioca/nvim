@@ -7,13 +7,13 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 
 vim.diagnostic.config({
-  virtual_text = {
-    prefix = "●",
-    spacing = 4,
-  },
-  signs = true,
-  underline = true,
-  update_in_insert = false,
+	virtual_text = {
+		prefix = "●",
+		spacing = 4,
+	},
+	signs = true,
+	underline = true,
+	update_in_insert = false,
 })
 
 require("config.lazy")
