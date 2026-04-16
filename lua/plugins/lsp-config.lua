@@ -21,7 +21,7 @@ return {
 		},
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "ts_ls", "terraformls", "yamlls" },
+				ensure_installed = { "lua_ls", "ts_ls", "terraformls", "yamlls", "clangd" },
 			})
 		end,
 	},
@@ -78,11 +78,29 @@ return {
 				},
 			})
 
+			vim.lsp.config("postgres_lsp", {
+				capabilities = capabilities,
+			})
+
+			vim.lsp.config("clangd", {
+				capabilities = capabilities,
+				cmd = { "clangd", "--background-index", "--clang-tidy" },
+			})
+
+			vim.lsp.config("gdscript", {
+				capabilities = capabilities,
+				-- Godot editor runs LSP on port 6005
+				cmd = { "ncat", "localhost", "6005" },
+			})
+
 			-- Enable servers
 			vim.lsp.enable("lua_ls")
 			vim.lsp.enable("ts_ls")
 			vim.lsp.enable("terraformls")
 			vim.lsp.enable("yamlls")
+			vim.lsp.enable("postgres_lsp")
+			vim.lsp.enable("clangd")
+			vim.lsp.enable("gdscript")
 
 			-- LspAttach autocommand for keymaps
 			vim.api.nvim_create_autocmd("LspAttach", {
@@ -101,10 +119,11 @@ return {
 					map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
 					map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
 					map("K", vim.lsp.buf.hover, "Hover Documentation")
+					map("<leader>lr", "<cmd>LspRestart<cr>", "[L]sp [R]estart")
 
 					-- Highlight references on CursorHold
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
-					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+					if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
 						local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 							buffer = event.buf,
@@ -119,7 +138,7 @@ return {
 					end
 
 					-- Toggle inlay hints
-					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+					if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
 						map("<leader>th", function()
 							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 						end, "[T]oggle Inlay [H]ints")
