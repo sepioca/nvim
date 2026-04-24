@@ -11,15 +11,40 @@ return {
 		dapui.setup()
 
 		vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DiagnosticError", linehl = "", numhl = "" })
-		vim.fn.sign_define("DapBreakpointCondition", { text = "◐", texthl = "DiagnosticWarn", linehl = "", numhl = "" })
+		vim.fn.sign_define(
+			"DapBreakpointCondition",
+			{ text = "◐", texthl = "DiagnosticWarn", linehl = "", numhl = "" }
+		)
 		vim.fn.sign_define("DapLogPoint", { text = "◆", texthl = "DiagnosticInfo", linehl = "", numhl = "" })
-		vim.fn.sign_define("DapStopped", { text = "→", texthl = "DiagnosticOk", linehl = "DapStoppedLine", numhl = "" })
-		vim.fn.sign_define("DapBreakpointRejected", { text = "✗", texthl = "DiagnosticError", linehl = "", numhl = "" })
+		vim.fn.sign_define(
+			"DapStopped",
+			{ text = "→", texthl = "DiagnosticOk", linehl = "DapStoppedLine", numhl = "" }
+		)
+		vim.fn.sign_define(
+			"DapBreakpointRejected",
+			{ text = "✗", texthl = "DiagnosticError", linehl = "", numhl = "" }
+		)
 
 		dap.adapters.lldb = {
 			type = "executable",
 			command = "/usr/bin/lldb-dap",
 			name = "lldb",
+		}
+
+		dap.adapters.godot = {
+			type = "server",
+			host = "127.0.0.1",
+			port = 6006,
+		}
+
+		dap.configurations.gdscript = {
+			{
+				type = "godot",
+				request = "launch",
+				name = "Launch scene",
+				project = "${workspaceFolder}",
+				launch_scene = true,
+			},
 		}
 
 		dap.configurations.cpp = {
@@ -35,18 +60,20 @@ return {
 						local actions = require("telescope.actions")
 						local action_state = require("telescope.actions.state")
 
-						pickers.new({}, {
-							prompt_title = "Select Executable",
-							finder = finders.new_oneshot_job({ "find", ".", "-type", "f", "-executable" }, {}),
-							sorter = conf.generic_sorter({}),
-							attach_mappings = function(buffer_number)
-								actions.select_default:replace(function()
-									actions.close(buffer_number)
-									coroutine.resume(coro, action_state.get_selected_entry()[1])
-								end)
-								return true
-							end,
-						}):find()
+						pickers
+							.new({}, {
+								prompt_title = "Select Executable",
+								finder = finders.new_oneshot_job({ "find", ".", "-type", "f", "-executable" }, {}),
+								sorter = conf.generic_sorter({}),
+								attach_mappings = function(buffer_number)
+									actions.select_default:replace(function()
+										actions.close(buffer_number)
+										coroutine.resume(coro, action_state.get_selected_entry()[1])
+									end)
+									return true
+								end,
+							})
+							:find()
 					end)
 				end,
 				cwd = "${workspaceFolder}",
