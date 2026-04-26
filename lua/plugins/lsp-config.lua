@@ -21,7 +21,7 @@ return {
 		},
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "ts_ls", "terraformls", "yamlls", "clangd" },
+				ensure_installed = { "lua_ls", "ts_ls", "terraformls", "yamlls", "clangd", "omnisharp" },
 			})
 		end,
 	},
@@ -93,6 +93,12 @@ return {
 				cmd = { "ncat", "localhost", "6005" },
 			})
 
+			vim.lsp.config("omnisharp", {
+				capabilities = capabilities,
+				cmd = { "OmniSharp", "--languageserver" },
+				filetypes = { "cs" },
+			})
+
 			-- Enable servers
 			vim.lsp.enable("lua_ls")
 			vim.lsp.enable("ts_ls")
@@ -101,6 +107,7 @@ return {
 			vim.lsp.enable("postgres_lsp")
 			vim.lsp.enable("clangd")
 			vim.lsp.enable("gdscript")
+			vim.lsp.enable("omnisharp")
 
 			-- LspAttach autocommand for keymaps
 			vim.api.nvim_create_autocmd("LspAttach", {
@@ -119,7 +126,10 @@ return {
 					map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
 					map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
 					map("K", vim.lsp.buf.hover, "Hover Documentation")
-					map("<leader>lr", "<cmd>LspRestart<cr>", "[L]sp [R]estart")
+					map("<leader>lr", function()
+						vim.lsp.stop_client(vim.lsp.get_clients({ bufnr = event.buf }))
+						vim.cmd.edit()
+					end, "[L]sp [R]estart")
 
 					-- Highlight references on CursorHold
 					local client = vim.lsp.get_client_by_id(event.data.client_id)

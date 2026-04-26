@@ -37,6 +37,23 @@ return {
 			port = 6006,
 		}
 
+		dap.adapters.coreclr = {
+			type = "executable",
+			command = "netcoredbg",
+			args = { "--interpreter=vscode" },
+		}
+
+		dap.configurations.cs = {
+			{
+				type = "coreclr",
+				name = "Launch",
+				request = "launch",
+				program = function()
+					return vim.fn.input("Path to dll: ", vim.fn.getcwd() .. "/", "file")
+				end,
+			},
+		}
+
 		dap.configurations.gdscript = {
 			{
 				type = "godot",
