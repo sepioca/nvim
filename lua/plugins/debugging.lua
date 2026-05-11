@@ -25,6 +25,7 @@ return {
 			{ text = "✗", texthl = "DiagnosticError", linehl = "", numhl = "" }
 		)
 
+		-- Java adapter is handled by nvim-jdtls via jdtls.setup_dap()
 		dap.adapters.lldb = {
 			type = "executable",
 			command = "/usr/bin/lldb-dap",
@@ -120,5 +121,9 @@ return {
 		vim.keymap.set("n", "<leader>do", dap.step_over, { desc = "Step over" })
 		vim.keymap.set("n", "<leader>di", dap.step_into, { desc = "Step into" })
 		vim.keymap.set("n", "<leader>dO", dap.step_out, { desc = "Step out" })
+		vim.keymap.set("n", "<leader>dq", function()
+			dap.terminate()
+			dapui.close()
+		end, { desc = "Terminate debugger" })
 	end,
 }

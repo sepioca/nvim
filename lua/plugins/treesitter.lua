@@ -13,6 +13,7 @@ return {
 				"godot_resource",
 				"gdshader",
 				"c_sharp",
+				"prisma",
 			},
 			highlight = { enable = true },
 			indent = { enable = false },

@@ -21,7 +21,7 @@ return {
 		},
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "ts_ls", "terraformls", "yamlls", "clangd", "omnisharp" },
+				ensure_installed = { "lua_ls", "ts_ls", "terraformls", "yamlls", "clangd", "omnisharp", "jdtls", "prismals" },
 			})
 		end,
 	},
@@ -99,6 +99,10 @@ return {
 				filetypes = { "cs" },
 			})
 
+			vim.lsp.config("prismals", {
+				capabilities = capabilities,
+			})
+
 			-- Enable servers
 			vim.lsp.enable("lua_ls")
 			vim.lsp.enable("ts_ls")
@@ -108,6 +112,7 @@ return {
 			vim.lsp.enable("clangd")
 			vim.lsp.enable("gdscript")
 			vim.lsp.enable("omnisharp")
+			vim.lsp.enable("prismals")
 
 			-- LspAttach autocommand for keymaps
 			vim.api.nvim_create_autocmd("LspAttach", {
