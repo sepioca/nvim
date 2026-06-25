@@ -21,7 +21,7 @@ return {
 		},
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "ts_ls", "terraformls", "yamlls", "clangd", "omnisharp", "jdtls", "prismals" },
+				ensure_installed = { "lua_ls", "ts_ls", "terraformls", "yamlls", "clangd", "omnisharp", "jdtls", "prismals", "postgres_lsp" },
 			})
 		end,
 	},
@@ -80,6 +80,8 @@ return {
 
 			vim.lsp.config("postgres_lsp", {
 				capabilities = capabilities,
+				filetypes = { "sql" },
+				root_markers = { "postgres-language-server.jsonc" },
 			})
 
 			vim.lsp.config("clangd", {
@@ -123,9 +125,10 @@ return {
 						vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 					end
 
-					map("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-					map("gr", vim.lsp.buf.references, "[G]oto [R]eferences")
-					map("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+					local builtin = require("telescope.builtin")
+					map("gd", builtin.lsp_definitions, "[G]oto [D]efinition")
+					map("gr", builtin.lsp_references, "[G]oto [R]eferences")
+					map("gI", builtin.lsp_implementations, "[G]oto [I]mplementation")
 					map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 					map("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
 					map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
