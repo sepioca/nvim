@@ -21,7 +21,10 @@ return {
 		},
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "ts_ls", "terraformls", "yamlls", "clangd", "omnisharp", "jdtls", "prismals", "postgres_lsp" },
+				ensure_installed = { "lua_ls", "ts_ls", "terraformls", "yamlls", "clangd", "omnisharp", "prismals", "postgres_lsp" },
+				-- Disable automatic_enable - we manually enable servers via vim.lsp.enable()
+				-- This prevents mason-lspconfig from auto-starting jdtls (handled by nvim-jdtls)
+				automatic_enable = false,
 			})
 		end,
 	},

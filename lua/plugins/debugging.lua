@@ -1,5 +1,6 @@
 return {
 	"mfussenegger/nvim-dap",
+	event = "VeryLazy",
 	dependencies = {
 		"nvim-neotest/nvim-nio",
 		"rcarriga/nvim-dap-ui",
@@ -117,7 +118,7 @@ return {
 		end
 
 		vim.keymap.set("n", "<leader>dt", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
-		vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "Continue" })
+		vim.keymap.set("n", "<F5>", dap.continue, { desc = "Continue" })
 		vim.keymap.set("n", "<leader>do", dap.step_over, { desc = "Step over" })
 		vim.keymap.set("n", "<leader>di", dap.step_into, { desc = "Step into" })
 		vim.keymap.set("n", "<leader>dO", dap.step_out, { desc = "Step out" })
@@ -125,5 +126,41 @@ return {
 			dap.terminate()
 			dapui.close()
 		end, { desc = "Terminate debugger" })
+		vim.keymap.set("n", "<leader>du", function()
+			dapui.toggle()
+		end, { desc = "Toggle DAP UI" })
+		vim.keymap.set("n", "<leader>ds", function()
+			dapui.float_element("scopes", { enter = true })
+		end, { desc = "Show scopes" })
+		vim.keymap.set("n", "<leader>dw", function()
+			dapui.float_element("watches", { enter = true })
+		end, { desc = "Show watches" })
+		vim.keymap.set("n", "<leader>db", function()
+			dapui.float_element("breakpoints", { enter = true })
+		end, { desc = "Show breakpoints" })
+		vim.keymap.set("n", "<leader>dk", function()
+			dapui.float_element("stacks", { enter = true })
+		end, { desc = "Show stacks" })
+		vim.keymap.set("n", "<F6>", function()
+			if vim.fn.filereadable(vim.fn.getcwd() .. "/project.godot") == 0 then
+				print("Not a Godot project")
+				return
+			end
+			require("telescope.builtin").find_files({
+				prompt_title = "Select Scene",
+				search_dirs = { vim.fn.getcwd() },
+				find_command = { "find", ".", "-type", "d", "-name", "addons", "-prune", "-o", "-name", "*.tscn", "-type", "f", "-print" },
+				attach_mappings = function(_, map)
+					map("i", "<CR>", function(prompt_bufnr)
+						local entry = require("telescope.actions.state").get_selected_entry()
+						require("telescope.actions").close(prompt_bufnr)
+						local scene = entry.path or entry[1]
+						local cmd = "/opt/godot/godot --path " .. vim.fn.getcwd() .. " " .. scene
+						vim.cmd("botright split | terminal " .. cmd)
+					end)
+					return true
+				end,
+			})
+		end, { desc = "Run selected scene in terminal" })
 	end,
 }

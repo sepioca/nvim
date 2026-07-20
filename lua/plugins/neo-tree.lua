@@ -13,10 +13,13 @@ return {
 	opts = {
 		filesystem = {
 			hijack_netrw_behavior = "disabled",
+			follow_current_file = {
+				enabled = true,
+			},
 		},
 	},
 	config = function(_, opts)
 		require("neo-tree").setup(opts)
-		vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>")
+		vim.keymap.set("n", "<leader>e", ":Neotree reveal toggle<CR>")
 	end,
 }
